@@ -113,3 +113,17 @@ Il apprend de l'experience.
 + Un neurone artificiel suit des règles logique de façon mécanique qui à partir de certains inputs amène à un certain output 
 + Un neurone artificiel peut à partir des même inputs, amener à un output différents si on change sa configuration interne
 
+## Binary neurons 
+
+Les neurones binaires fonctionnent de la façon suivante: 
+
++ Ils ne peuvent avoir comme valeur de sortie (output) seulement deux état: ``òn```/ ```off```.
+
+Pour décider à quel état est l'output, ils décident de la façon suivante: 
+
++ Ils additionnent la valeur de chacun des inputs;
++ Ils comparent cette somme à la valeur "curseur" qui est paramêtrer dans leur configutation;
++ Si la somme des inputs est inférieur à la valeur curseur, alors l'état de sortie est à ```off```;
++ Si la somme des inputs est supérieur à la valeur curseur, alors l'état de sortie est à ```on```;
+
+

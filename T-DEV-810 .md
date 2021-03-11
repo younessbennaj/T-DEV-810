@@ -96,4 +96,78 @@ A chaque image notre ANN va faire de son mieux pour reconnaitre le chiffre sur l
 
 Si par contre notre ANN ne reconnait pas le chiffre, alors sa mécanique en interne va être modifié pour qu'il ait plus de chance de reconnaitre le chiffre la prochaine fois.
 
+## MNIST, Python et les librairies
+
+### MNIST 
+
+C'est un dataset, c'est à dire une collection d'image, représentant des chiffres écrit à la main. C'est un dataset très utilisé pour entrainer des réseaux de neurones articifiel à traité et reconnaitre des chiffres sur une image. 
+
+Il va être conçu de la façon suivante: 
+
+- 1 tableau de 60000 élément qui représente notre échantillon d'image 
+- Chaque élément du tableau est un tableau qui contient 28 listes représetant les lignes en pixel de chaque image
+
+Les dimensions du tableau sont donc: ```(60000, 28, 28)```
+
+### Notebook Jupyter 
+
+C'est une interface qui va nous permettre de présenter le travail effectuer en combinant language naturel et language informatique. Cela va nous permettre de faire à la fois un travail de rédaction écrit en language humain, et ajouter du code live, de faire de la visualisation de de donnée. 
+
+### Python 
+
+Language de programmation machine utilisé pour réalisé nos programmes. 
+
+### pip 
+
+```pip``` est le gestionnaire de package/librairie du langage python, il va nous permettre de pouvoir importer des librairie python externe sur notre machine.
+
+### Tenserflow 
+
+Librairie de machine learning écrite en Python. Elle va nous permettre de créer, d'entrainer et de tester notre réseau de neurones artificiels. 
+
+### Maptolib 
+
+Librairie python qui va nous permettre de réalisé des statistiques et des graphs de données dans le but de présenter des informations comme la distribution de chaque chiffre dans le dataset par exemple. 
+
+### Numpy 
+
+Librairie python qui nous permet de travailler avec des tableaux à plusieurs dimensions. Cela va nous être utile pour notre dataset qui représente l'échantillon d'image sous la forme d'un tableau à 3 dimension. 
+
+### requirement.txt 
+
+On va pouvoir ajouter donc la liste de nos dépendances, c'est à dire les librairies dont vont dépendre notre projet, dans un fichier dédié: 
+
+```
+# requirement.txt
+tenserflow
+maptolib
+numpy
+```
+
+et pour les installer il suffit de lancer la commande 
+
+```
+pip3 install -r requirement.txt
+```
+
+## Structure du projet 
+
+```main.py``` est le fichier principal de notre projet. 
+
+```
+main.py
+```
+## Les 3 modes d'un programme d'ANN 
+
+```train```: On va entrainer le réseau de neurone artificiel à partir du dataset. 
+
+```test```: On va tester le réseau de neurone. 
+
+```use```: On va utiliser le réseau de neurone sur des nouvelles images de chiffre. 
+
+
+
+
+
+
 
