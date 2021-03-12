@@ -123,7 +123,11 @@ Language de programmation machine utilisé pour réalisé nos programmes.
 
 ### Tenserflow 
 
-Librairie de machine learning écrite en Python. Elle va nous permettre de créer, d'entrainer et de tester notre réseau de neurones artificiels. 
+Librairie de deep learning écrite en Python. Elle va nous permettre de créer, d'entrainer et de tester notre réseau de neurones artificiels. 
+
+### Keras 
+
+API de réseau de neurones. Permettre d'ajouter une couche d'abstraction de haut niveau pour travailler plus facilement avec les réseaux de neurones.
 
 ### Maptolib 
 
