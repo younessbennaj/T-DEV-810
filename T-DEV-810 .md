@@ -10,7 +10,7 @@ Mettre en place ***un réseau de neurone artificiel*** capable de reconnaitre un
 
 ### Intelligence aritficielle 
 
-Programme qui a pour but d'imiter les fonctions cognitives humaines. Comme l'intelligence naturelle (ex: humaine), elle est basé sur la fléxibilité, c'est à dire la capacité de l'intelligence à apprendre des ses experiences.
+Programme qui a pour but d'imiter les fonctions cognitives humaines. Comme l'intelligence naturelle (ex: humaine), elle est basé sur la fléxibilité, c'est à dire la capacité de l'intelligence à apprendre des ses experiences. 
 
 ### Neurone artificiel 
 
@@ -89,6 +89,10 @@ Cette logique interne determine le comportement comme porte logique d'un neurone
 
 La capacité d'apprentissage et de prédiction d'un neurone articifiel (et donc d'un ANN) repose sur le principe suivant: Déterminer la valeur optimale de la ***decision boudary*** et optmiser sa logique interne (changer la "slope"/"pente" d'une ***decision boudary***). 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 300730d0219216a0a45de9520f568c33a0d5a4c2
 ### Image recognition 
 
 Programme visant à faire reconnaitre, par une machine, une information visuelle à partir d'une image donnée. La compléxité tiens à la fois dans les différences entre les fondements de la vision humaine et de celle des machines, mais également dans le manque de flexibilité d'une approche algoritmique classique pour résoudre ce problème. C'est pour cela qu'on utilise une approche utilisant les intelligence aritificielle, flexible par nature. 
@@ -194,6 +198,30 @@ main.py
 ```test```: On va tester le réseau de neurone. 
 
 ```use```: On va utiliser le réseau de neurone sur des nouvelles images de chiffre. 
+
+# Prediction 
+
+## Définition
+
+### Classification problem
+
+Sujet du machine learning relatif à faire apprendre à une machine le fait de regrouper 
+des données selon un critère particulier. 
+
+Dans notre exemple l'objectif va être de permettre à la machine de pouvoir prédir en 
+fonction d'une image en input à quel "groupe" elle appartient, c'est à dire quel chiffre entre 0 et 9.
+
+Notre classifier est donc un programme qui a pour but de distinguer les différentes images qui lui sont soumise et de les classer par chiffre.
+
+Mais avant il est nécessaire de définir les caractéristiques mesurable qui nous permettent de distinguer les différents chiffres sur une image ? 
+
+Dans notre classifier chaque image est représenté par un tableau de longueur n = 784, avec chaque valeur rerprésentant un pixel spécifique de l'image codé selon sa nuance de noir et blanc.
+
+C'est donc la présence de tel pixel, à tel nuance (valeur numérique) et à tel endroit du tableau qui va nous permettre de pouvoir classer les images par chiffre. En effet, on va apprendre à la machine que par exemple que lorsqu'on a un 6 sur l'image alors dans la séquence on retrouve à tel index tel nuance de noir et blanc. 
+
+Cependant il est difficile pour une machine de pouvoir travailler avec une matrice 28*28, on donc utiliser un algorithme qui va permettre d'extraire les portions les plus importantes d'une image pour obtenir des matrices 3*3 
+
+
 
 
 
