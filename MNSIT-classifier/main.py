@@ -89,10 +89,23 @@ class Classifier:
         plt.imshow(pixels, cmap='gray')
         plt.show()
 
+    def reshape_dataset(self, dataset):
+        if dataset == 'train':
+            x_train, _ = self.train_data
+            data = x_train
+        else:
+            x_test, _ = self.train_test
+            data = x_test
+        
+        print(data)
+
+# On crée une nouvelle instance de notre class
 c = Classifier()
 
 # On affiche la 4 ème image du dataset d'entraintement
-c.display_image('train', 4)
+# c.display_image('train', 4)
 
-# On affiche la distribution de chaque chiffre par dataset
-c.display_statistics()
+# # On affiche la distribution de chaque chiffre par dataset
+# c.display_statistics()
+
+c.reshape_dataset('train')

@@ -63,6 +63,32 @@ Si l'ANN reconnait bien l'information, alors il ne se passe rien.
 
 Si l'ANN ne reconnait pas l'information, alors sa configuration interne est mise à jour pour qu'il ait plus de chance de reconnaitre l'information la prochaine dois. 
 
+### Neurone Artificiel Binaire 
+
+Un neurone artificiel binaire, est un neurone artificiel qui dépend de 2 input pour déterminer son output. Chaque input en entrée possède une certaine valeur qu'on va appeler ***I1*** et ***I2***.
+
+La logique interne d'un neurone binaire repose sur ce qu'on appelle la ***decision boudary***, une valeur limite que l'on nomme ***b***. 
+
+Voici un exemple de logique d'un neurone binaire:
+
+L'output (0 ou 1) de ce neurone binaire est determiné de la façon suivante: Si la valeur totale des deux inputs cummulé est supérieur ou égale à la valeur limite, alors l'output est à 1 sinon il est à 0 (pas de signal). On peut résumé cela par la formule: 
+
+```
+I1 + I2 >= b
+```
+
+Il existe d'autres types de logique interne (ou "slope") pour un neurone binaire.
+
+eg:
+
+```
+I2 - I1 >= b
+``` 
+
+Cette logique interne determine le comportement comme porte logique d'un neurone artificiel. 
+
+La capacité d'apprentissage et de prédiction d'un neurone articifiel (et donc d'un ANN) repose sur le principe suivant: Déterminer la valeur optimale de la ***decision boudary*** et optmiser sa logique interne (changer la "slope"/"pente" d'une ***decision boudary***). 
+
 ### Image recognition 
 
 Programme visant à faire reconnaitre, par une machine, une information visuelle à partir d'une image donnée. La compléxité tiens à la fois dans les différences entre les fondements de la vision humaine et de celle des machines, mais également dans le manque de flexibilité d'une approche algoritmique classique pour résoudre ce problème. C'est pour cela qu'on utilise une approche utilisant les intelligence aritificielle, flexible par nature. 
