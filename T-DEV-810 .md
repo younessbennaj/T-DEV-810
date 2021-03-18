@@ -10,7 +10,7 @@ Mettre en place ***un réseau de neurone artificiel*** capable de reconnaitre un
 
 ### Intelligence aritficielle 
 
-Programme qui a pour but d'imiter les fonctions cognitives humaines. Comme l'intelligence naturelle (ex: humaine), elle est basé sur la fléxibilité, c'est à dire la capacité de l'intelligence à apprendre des ses experiences.
+Programme qui a pour but d'imiter les fonctions cognitives humaines. Comme l'intelligence naturelle (ex: humaine), elle est basé sur la fléxibilité, c'est à dire la capacité de l'intelligence à apprendre des ses experiences. 
 
 ### Neurone artificiel 
 
@@ -62,6 +62,33 @@ Un ANN apprends de ses expériences via ce qu'on appelle un entraintement ou 'tr
 Si l'ANN reconnait bien l'information, alors il ne se passe rien. 
 
 Si l'ANN ne reconnait pas l'information, alors sa configuration interne est mise à jour pour qu'il ait plus de chance de reconnaitre l'information la prochaine dois. 
+
+### Neurone Artificiel Binaire 
+
+Un neurone artificiel binaire, est un neurone artificiel qui dépend de 2 input pour déterminer son output. Chaque input en entrée possède une certaine valeur qu'on va appeler ***I1*** et ***I2***.
+
+La logique interne d'un neurone binaire repose sur ce qu'on appelle la ***decision boudary***, une valeur limite que l'on nomme ***b***. 
+
+Voici un exemple de logique d'un neurone binaire:
+
+L'output (0 ou 1) de ce neurone binaire est determiné de la façon suivante: Si la valeur totale des deux inputs cummulé est supérieur ou égale à la valeur limite, alors l'output est à 1 sinon il est à 0 (pas de signal). On peut résumé cela par la formule: 
+
+```
+I1 + I2 >= b
+```
+
+Il existe d'autres types de logique interne (ou "slope") pour un neurone binaire.
+
+eg:
+
+```
+I2 - I1 >= b
+``` 
+
+Cette logique interne determine le comportement comme porte logique d'un neurone artificiel. 
+
+La capacité d'apprentissage et de prédiction d'un neurone articifiel (et donc d'un ANN) repose sur le principe suivant: Déterminer la valeur optimale de la ***decision boudary*** et optmiser sa logique interne (changer la "slope"/"pente" d'une ***decision boudary***). 
+
 
 ### Image recognition 
 
@@ -168,6 +195,30 @@ main.py
 ```test```: On va tester le réseau de neurone. 
 
 ```use```: On va utiliser le réseau de neurone sur des nouvelles images de chiffre. 
+
+# Prediction 
+
+## Définition
+
+### Classification problem
+
+Sujet du machine learning relatif à faire apprendre à une machine le fait de regrouper 
+des données selon un critère particulier. 
+
+Dans notre exemple l'objectif va être de permettre à la machine de pouvoir prédir en 
+fonction d'une image en input à quel "groupe" elle appartient, c'est à dire quel chiffre entre 0 et 9.
+
+Notre classifier est donc un programme qui a pour but de distinguer les différentes images qui lui sont soumise et de les classer par chiffre.
+
+Mais avant il est nécessaire de définir les caractéristiques mesurable qui nous permettent de distinguer les différents chiffres sur une image ? 
+
+Dans notre classifier chaque image est représenté par un tableau de longueur n = 784, avec chaque valeur rerprésentant un pixel spécifique de l'image codé selon sa nuance de noir et blanc.
+
+C'est donc la présence de tel pixel, à tel nuance (valeur numérique) et à tel endroit du tableau qui va nous permettre de pouvoir classer les images par chiffre. En effet, on va apprendre à la machine que par exemple que lorsqu'on a un 6 sur l'image alors dans la séquence on retrouve à tel index tel nuance de noir et blanc. 
+
+Cependant il est difficile pour une machine de pouvoir travailler avec une matrice 28*28, on donc utiliser un algorithme qui va permettre d'extraire les portions les plus importantes d'une image pour obtenir des matrices 3*3 
+
+
 
 
 

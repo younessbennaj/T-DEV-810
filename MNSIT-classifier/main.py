@@ -56,12 +56,12 @@ class Classifier:
         plt.box(on=None)
 
         # On ajoute un peu de style à notre tableau
-        ccolors = plt.cm.BuPu(np.full(len(columns), 0.1))
+        colors = plt.cm.BuPu(np.full(len(columns), 0.1))
 
         # On crée notre tableau et on le centre
         table = plt.table(
             cellText=cell_text,
-            colColours=ccolors,
+            colColours=colors,
             colLabels=columns, 
             loc='center')
 
@@ -75,13 +75,11 @@ class Classifier:
     # dataset: le dataset d'entraintement ou de test
     # index: l'index de l'image qu'on souhaite afficher
     def display_image(self, dataset, index):
-        train = 'train'
- 
         if dataset == 'train':
             x_train, _ = self.train_data
             data = x_train
         else:
-            x_test, _ = self.train_test
+            x_test, _ = self.test_data
             data = x_test
 
         image = data[index]
@@ -89,10 +87,32 @@ class Classifier:
         plt.imshow(pixels, cmap='gray')
         plt.show()
 
+    def reshape_dataset(self, dataset):
+        if dataset == 'train':
+            x_train, _ = self.train_data
+            data = x_train
+        else:
+            x_test, _ = self.test_data
+            data = x_test
+
+        arr = np.array(data)
+        # from shape [n, 28*28]
+        print(arr.shape)
+        arr = arr.transpose(1,2,0)
+        print(arr.shape)
+        arr = arr.reshape(-1, arr.shape[-1])
+        print(arr.shape)
+        arr = arr.transpose(1,0)
+        # to shape [n, 784]
+        print(arr.shape)
+
+# On crée une nouvelle instance de notre class
 c = Classifier()
 
-# On affiche la 4 ème image du dataset d'entraintement
-c.display_image('train', 4)
+# # On affiche la 4 ème image du dataset d'entraintement
+# c.display_image('train', 4)
 
-# On affiche la distribution de chaque chiffre par dataset
-c.display_statistics()
+# # On affiche la distribution de chaque chiffre par dataset
+# c.display_statistics()
+
+c.reshape_dataset('train')
