@@ -65,6 +65,34 @@ Si l'ANN ne reconnait pas l'information, alors sa configuration interne est mise
 
 ### Neurone Artificiel Binaire 
 
+***
+
+##### Résumé 1
+
+Un neurone artificiel binaire est une entité qui en fonction de deux inputs en entré, peut être actif ou inactif en output. 
+
+L'état de sorti est déterminé par la configuration interne du neurone artificiel. Cette configuration est basé sur la decision boundary qui est la valeur qui détermine si en fonction de la valeur totale des inputs, l'output est actif ou inactif. 
+
+```
+I1 + I2 >= b ?
+```
+
+Chaque input peut se voir attribuer un poids 'input weight' qui va permettre de jouer sur la slope de la decision boudary (voir représentation graphique), tel que:
+
+```
+I1 * w1 + I2 * w2 >= b ?
+```
+
+Un neurone artificiel agit donc comme une porte logique: En fonction de 2 inputs il donne un certain input. 
+
+Cependant on peut vite se rendre compte qu'avec neurone artificiel on peut seulement concevoir une porte OR ou AND. 
+
+Pour les portes logiques plus complexe on va donc recourir à la supérposition en couche des neurones. Cela va nous permettre de faire en sorte que certains neurone soit les inputs des neurones des couches supérieurs. 
+
+***
+
+##### Résumé 2
+
 Un neurone artificiel binaire, est un neurone artificiel qui dépend de 2 input pour déterminer son output. Chaque input en entrée possède une certaine valeur qu'on va appeler ***I1*** et ***I2***.
 
 La logique interne d'un neurone binaire repose sur ce qu'on appelle la ***decision boudary***, une valeur limite que l'on nomme ***b***. 
@@ -89,10 +117,6 @@ Cette logique interne determine le comportement comme porte logique d'un neurone
 
 La capacité d'apprentissage et de prédiction d'un neurone articifiel (et donc d'un ANN) repose sur le principe suivant: Déterminer la valeur optimale de la ***decision boudary*** et optmiser sa logique interne (changer la "slope"/"pente" d'une ***decision boudary***). 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 300730d0219216a0a45de9520f568c33a0d5a4c2
 ### Image recognition 
 
 Programme visant à faire reconnaitre, par une machine, une information visuelle à partir d'une image donnée. La compléxité tiens à la fois dans les différences entre les fondements de la vision humaine et de celle des machines, mais également dans le manque de flexibilité d'une approche algoritmique classique pour résoudre ce problème. C'est pour cela qu'on utilise une approche utilisant les intelligence aritificielle, flexible par nature. 
@@ -221,11 +245,58 @@ C'est donc la présence de tel pixel, à tel nuance (valeur numérique) et à te
 
 Cependant il est difficile pour une machine de pouvoir travailler avec une matrice 28*28, on donc utiliser un algorithme qui va permettre d'extraire les portions les plus importantes d'une image pour obtenir des matrices 3*3 
 
+### Concevoir le réseau de neurone 
+
+L'idée ici serait de créer un réseaux de neurone capable de reconnaitre un chiffre sur une image. Il se ferait de la façon suivante: 
+
+En entré on retrouve 784 neurones d'input qui reçoivent chaque pixel de l'image. 
+
+En sortie j'ai 10 neurones d'ouput pour chaque chiffre. 
+
+Si un neurone d'ouput est actif, alors le chiffre sur l'image correspond au chiffre associé à ce neurone d'output.
+
+Notre objectif va être d'entrainer notre réseaux de neurones sur un dataset. A chaque image le réseaux de neurone va tester sa performance tout en sachant quel doit être l'output final. Si il parvient à sortir en output le bon chiffre alors il ne change rien. Si ce n'est pas le cas, alors il va devoir faire des ajustements dans la configuration de ces neurones. 
+
+### Comment ajuster les neurones ? 
+
+Les neurones artificiel sont des fonctions mathématiques qui prennent en entrée des inputs et donne en sortie un output. Dans une logique d'ajustement le neurone peut avoir besoin de modifier sa configuration interne. 
+
+Pour modifier son output, le neurone artificiel peut: 
+
++ Augmenter ou diminuer son bias, c'est à dire la valeur limite à partir de laquelle il peut varier de 0 à 1
++ Augmenter ou diminuer le poids des inputs en entrée actifs, Plus un input à de poids et plus sa valeur va avoir de l'importance dans la valeur totale des inputs. 
+
+On se poser la question: 
+
+```
+Itotal - b => plus proche de 1 ou de 0 ?
+```
+
+
+Chaque neurone qui composent un réseau doit faire en sorte d'avoir la bonne configuration optimale pour que l'output final correspondent à ce qui est attendu tel ou tel input du réseaux. Cette configuration optimale s'obtient via l'entrainement où le reseaux est soumis à un input et on lui donne l'output attendu. Il compare son ouput et celui attendu et peut détermer si il est proche ou non de la bonne configuration. Si ce n'est pas le cas il s'ajuste, et ainsi de suite...
+
+### Couches de neurones 
+
+Chaque neurone des couhes cachée => 1 decision boundary qui vient découpé le nuage de point pour séparé les décision binaire par exemple. 
+
+Micro décision => micro choix intérmédiaire => vers un plus gros choix => Split le problèlme en micro problème binaire qu'un neurone peut résoudre en terme de probabilité binaire (entre 0 et 1) 
+
+
+Chaque neurone est une fonction qui va calculer la probabilité entre 0 et 1 de correspondre aux caractéritiques qu'on lui demande de reconnaitre en fontion de tous les inputs qu'il reçoit en entrée, qui sont également des probabilité aux étapes précédentes.
 
 
 
+Ex: En entrée j'ai 0,9 de probabilité d'avoir un cercle et 0,8 d'avoir un trait droit sur mon image => alors mon calcul dit que c'est à 0,9 de probabilité un "9".
 
+=> Etape de logique supplémentaire 
 
+Couche 1: Input => 784 valeurs numériques pour chaque nuance de gris de chaque pixel 
 
+Couche 2: Probabilité que tel ou tel petite ligne soit reconnu sur l'image à partir des nuances de gris
 
+Couche 3: Probabilité que tel ou tel patterne soit reconnu du l'image à partir des petits segments reconnu 
+
+Couche 4: Probabilité que tel ou tel chiffre soit reconnu sur l'image à partir des pattern reconnus 
+
+Backpropagation: a chaque fois que l'ouput final est pas bon, on applique cet algorithme sur le réseau et les neurones précédent sont update avec la nouvelle valeur... (résumé grossier) 
 
