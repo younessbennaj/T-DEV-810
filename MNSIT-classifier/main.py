@@ -1,6 +1,16 @@
+# On importe notre dataset
 from tensorflow.keras.datasets import mnist
+# Lib pour la visualisation de données
 from matplotlib import pyplot as plt
+# Lib pour travailler avec les tableaux
 import numpy as np
+
+from tensorflow import keras
+
+# Classe pour créer les couches du réseau
+from tensorflow.keras.layers import Dense
+# Classe pour créer une nouvelle instance de réseau
+from tensorflow.keras.models import Sequential
 
 class Classifier:
     def __init__(self):
@@ -88,23 +98,81 @@ class Classifier:
         plt.show()
 
     def reshape_dataset(self, dataset):
+        num_classes = 10
         if dataset == 'train':
-            x_train, _ = self.train_data
+            x_train, y_train = self.train_data
             data = x_train
+            y = keras.utils.to_categorical(y_train, num_classes)
         else:
-            x_test, _ = self.train_test
+            x_test, y_test = self.test_data
             data = x_test
+            y = keras.utils.to_categorical(y_test, num_classes)
+
 
         arr = np.array(data)
         # from shape [n, 28*28]
-        print(arr.shape)
         arr = arr.transpose(1,2,0)
-        print(arr.shape)
         arr = arr.reshape(-1, arr.shape[-1])
-        print(arr.shape)
         arr = arr.transpose(1,0)
         # to shape [n, 784]
-        print(arr.shape)
+
+        return arr, y
+
+    # Ajouter la méthode load_model
+    def load_model(self):
+
+        # Chaque image est composé de 28*28=784 pixels de nuances de gris
+        # C'est le nombre d'inputs de notre réseau de neurone
+        image_size = 784
+
+        # Lorsqu'une machine résoud un problème de classification, elle catégorise par classe;
+        # Dans notre cas ce sont les chiffres de 0 à 9, soit 10 classes
+        num_classes = 10
+
+        # On va crée notre réseau de neurone à partir de la classe Sequential
+        # Cela nous retourne une nouvelle instance d'ANN
+        model = Sequential()
+
+        # On va ajouter une couche cachée (HL) à notre réseau
+        # On va ajouter 32 noeuds (neurones), qui sont des fonctions sigmoid (0 < activation < 1)
+        # Chaque neurone prend 784 en entrée (nombre d'input)
+        model.add(Dense(units=32, activation='sigmoid', input_shape=(image_size,)))
+
+        # On va ensuite ajouter la couche de neurone d'output
+        # Selon leur activation, on va pouvoir connaitre quel chiffre à été reconnu sur l'image 
+        model.add(Dense(units=num_classes, activation='softmax'))
+
+        # On peut calculer le nombres de valeurs ajustables et l'afficher dans la console
+        model.summary()
+
+        #return model
+        return model
+
+    # Ajouter la methode train_model
+    def train_model(self, model, train, test):
+        # x => La donnée en entrée, chiffre de 0 à 9 centré sur une region de pixel au format 28*28
+        # y => Le label, c'est à dire le chiffre qui doit être prédit par le réseau de neurone
+        x_train, y_train = train
+        x_test, y_test = test
+
+        model.compile(optimizer="sgd", loss='categorical_crossentropy', metrics=['accuracy'])
+        # On va entrainer le model sur le dataset
+        history = model.fit(x_train, y_train, batch_size=128, epochs=5, verbose=False, validation_split=.1)
+        # On va tester la performance de notre ANN
+        _ , accuracy  = model.evaluate(x_test, y_test, verbose=False)
+        print(accuracy)
+        # On va visualiser le résultat
+        plt.plot(history.history['accuracy'])
+        plt.plot(history.history['val_accuracy'])
+        plt.title('model accuracy')
+        plt.ylabel('accuracy')
+        plt.xlabel('epoch')
+        plt.legend(['training', 'validation'], loc='best')
+        plt.show()
+
+        # train model on training set
+
+    # Ajouter la méthode test_model
 
 # On crée une nouvelle instance de notre class
 c = Classifier()
@@ -115,4 +183,11 @@ c = Classifier()
 # # On affiche la distribution de chaque chiffre par dataset
 # c.display_statistics()
 
-c.reshape_dataset('train')
+# On récupère le dataset d'entrainenement et de test
+train = c.reshape_dataset('train')
+test = c.reshape_dataset('test')
+
+model = c.load_model()
+
+# On va entrainer notre model avec les datasets d'entraintement et de test
+c.train_model(model, train, test)

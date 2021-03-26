@@ -114,6 +114,11 @@ On remarque deux choses:
 
 A partir de cette relation on peut donc maintenant classer nos informations d'entrée selon une catéagorie.
 
+=> Neurone actif ou non ? 
+
+=> Sigmoid ?
+
+=> Layer ? Deep ?
 
 ### Exemple: Reconnaissance d'image 
 

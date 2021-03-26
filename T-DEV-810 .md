@@ -215,13 +215,7 @@ pip3 install -r requirement.txt
 ```
 main.py
 ```
-## Les 3 modes d'un programme d'ANN 
 
-```train```: On va entrainer le réseau de neurone artificiel à partir du dataset. 
-
-```test```: On va tester le réseau de neurone. 
-
-```use```: On va utiliser le réseau de neurone sur des nouvelles images de chiffre. 
 
 # Prediction 
 
@@ -299,4 +293,129 @@ Couche 3: Probabilité que tel ou tel patterne soit reconnu du l'image à partir
 Couche 4: Probabilité que tel ou tel chiffre soit reconnu sur l'image à partir des pattern reconnus 
 
 Backpropagation: a chaque fois que l'ouput final est pas bon, on applique cet algorithme sur le réseau et les neurones précédent sont update avec la nouvelle valeur... (résumé grossier) 
+
+# Objectif 
+
+Objectif de notre machine: ***Reconnaitre un chiffre entre 0 et 9 sur une image donnée***
+
+## Dataset 
+
+Le dataset d'entrainement est composé d'un ensemble de 60000 images. Chacune de ces images représentent un chiffre de 0 à 9, écrit à la main, centré sur une région de pixel au format 28*28.
+
+| Data                           | Label                                                     |
+|--------------------------------|-----------------------------------------------------------|
+| Images représantant un chiffre | Le chiffre qui doit être prédit par le réseaux de neurone |
+
+```Shape: (60000, 784)```
+
+Pour tester la précision de notre ANN, nous avons également besoin de le tester sur un ensemble de donnée qu'il n'a pas déjà "vu". On appelle cet ensemble le ```dataset de test```.
+
+TODO: https://scikit-learn.org/stable/modules/neural_networks_supervised.html + MNSIT
+
+## ANN
+
+Nous allons concevoir, entrainer et tester notre dataset
+
+### Création du model
+
+Classe qui nous permet de crée de nouvelle instance de model d'ANN
+
+```
+from keras.models import Sequential
+```
+
+Classe qui nous permet de crée de nouvelle instance de couche pour notre réseau de neurone
+
+```
+from keras.layers import Dense # Dense layers are "fully connected" layers
+```
+
+On crée notre réseau:
+
+```
+model = Sequential()
+```
+
+Dans notre réseau de neurone nous allons avoir un input pour chaque pixel de l'image. Ce qui fait que notre ANN va posséder 784 inputs.
+
+ Notre réseau va posséder 10 neurones d'output, correspondant à chaque chiffre entre 0 et 9 reconnu sur l'image. 
+ 
+```
+# total chiffre entre 0 et 9
+num_classes = 10
+
+# On ajoute la couche des outputs, activé selon le chiffre reconnu sur l'image
+model.add(Dense(units=num_classes, activation='softmax'))
+```
+Dans cette première version de notre réseau: 
+
++ Chaque neurone ```output``` possède un bias ```b``` qui peut être ajusté 
++ Chaque valeur d'input peut être ajusté par un poids ```weight``` tel que ```input * weight```
++ Chaque neurone ```output``` prends en entrée la valeur de chaque input ajusté par le poids, donc 784 donnée d'entrée
++ Il existe donc ```nb inputs * nb outputs + nb bias``` => ```784 * 10 + 10 = 7850``` valeurs qui peuvent être ajustées 
+
+Nous allons ajoute une couche cachée (HL) à notre réseau tel que: 
+
++ Elle contient 32 noeuds (neurones)
++ Les neurones sont des fonctions sigmoid ( 0 < activation < 1 ) 
++ Les neurones prennent 784 entrée (chaque pixel de l'image)
+
+```
+# Le nombre de pixel qui composent chaque image
+image_size = 784
+
+# On une hidden layer à notre réseau, elle contient 32 noeuds (neurones), ils sont de type sigmoid ( 0 < activation < 1 ) et prennent 784 entrée (chaque pixel de l'image)
+model.add(Dense(units=32, activation='sigmoid', input_shape=(image_size,)))
+```
+
+Il en resulte ```784 * 32 + 32 = 25120 + 32 * 10 + 10 = 25450``` valeurs ajustables.
+
+On peut calculer ses valeurs grâce à une méthode de Keras:
+
+```
+# Total params: 25,450
+model.sumary()
+```
+(Améliorer le model ? Retravailler les données d'entrées ou les paramètres du réseau (ex: cross validation))
+
+### Entrainement et test du model 
+
+```
+model.compile(optimizer="sgd", loss='categorical_crossentropy', metrics=['accuracy'])
+
+# On va entrainer le model sur le dataset
+history = model.fit(x_train, y_train, batch_size=128, epochs=5, verbose=False, validation_split=.1)
+# On va tester la performance de notre ANN
+_ , accuracy  = model.evaluate(x_test, y_test, verbose=False)
+print(accuracy)
+```
+
+Le réseau va être entrainé pendant 5 périodes (epoch), en modifiant les paramètres à chaques étape afin d'avoir les paramètres qui aboutissent à un plus petit taux d'erreur.
+
+On va ensuite pouvoir évaluer la pérformance de notre model grâce à la méthode ```evaluate```. On obtient l'accuracy (précision) du model. 
+
+Mon model obtient une précision de ```0.8912000060081482```.
+
+# Questions 
+
+## 1 - 
+
+> Why use a separate dataset to measure the performance of an algorithm ?
+What are the results you get when you test your algorithm on the same dataset used in training?
+
+Pour tester la précision de notre ANN, nous avonss besoin de le tester sur un ensemble de donnée qu'il n'a pas déjà "vu". On appelle cet ensemble le ```dataset de test```. En effet lors de l'entrainement les paramètres de mon réseau de neurone ont été configurés de manière à ce que les prédictions de celui ci sur une image correspondent à celle du label qui lui est associé dans le dataset. Nous avons besoin d'évaluer la "fléxible" du réseau à travailler avec des images inconnues.
+
+```J'obtient à peu de chose près la même précision autour de 90%```
+
+## 2 - 
+
+Le bias est la différence entre la prédiction moyenne d'un model et la valeur correcte qu'il essait de prédir. 
+
+La variance est la variabilité des prédictions, c'est à dire la manière dont les prédictions sont "étalés" par le modèle.
+
+La variance et le bias devraient avoir les plus petites valeur qu'il est possible. 
+
+## 3 - 
+
+ 
 
