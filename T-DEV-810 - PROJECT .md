@@ -163,6 +163,25 @@ image_shape = (1380, 1668)
 
 ## Traitement des données 
 
+### Préparation des images et des méta données 
+
+Nous avons 2 conditions dans notre études: 
+
++ Poumons infectés par la pneumonie 
++ Poumons sains 
+
+Ce qui implique que notre dataset est strucutré par classe 
+
+```
+chest_Xray/
+	test/
+		PNEUMONIA/
+		NORMAL/
+	train/
+		PNEUMONIA/
+		NORMAL/
+```
+
 L'objectif va être de manipuler nos images pour ensuite pouvoir les donner à notre model. 
 
 ### Objectif 
@@ -171,13 +190,182 @@ Lorsqu'on utilise des CNN, on a besoin de beaucoup d'image, donc l'objectif sera
 
 L'autre objectif est la réduction de pixel présent dans une image, avec (1380, 1668) c'est plus de 2 000 000 de point. Pour fournir un réseau de neurone on a besoin de réduire la shape des images. C'est ce qu'on appelle l'***image normalization***
 
+
+***data augmentation***: Augmenter le nombre d'image labelé pour nourir le réseau de neurone à partir d'un dataset de départ souvent peu fourni (on a besoin d'une 10 voir 100 de millier d'image pour entrainer correctemnt un ANN). Cependant il faut être prudent car cela peut mener à ce qu'on appelle du overfitting, c'est à dire que notre réseau devient trop spécifiquement entrainé pour notre dataset et obtient de mauvais résultat sur d'autre dataset de test ou cas réels.
+
 ### Image Normalization 
 
 Lorsqu'on travaille avec des réseaux de neurone un des principaux objectifs dans le traitement des images est une mise à l'échelle. Ce qu'on entends par là c'est manipuler les données pour qu'elles obtiennent les mêmes dimensions.
 
+De plus dans notre cas la dimension des images est beaucoup trop importante (1380, 1668) et notre mémoire va être à cour de mémoire pour faire tourner le model. 
+
+Pour se faire je vais utiliser skimage qui contient des algorithmes qui vont me permettre de traité les image. En particulier c'est la fonction ```transform.resize()``` qui va nous être utile: 
+
+```
+# Redimensionner une image (normal)
+from skimage import transform
+
+# On défini la nouvelle shape de notre image
+new_shape = (130, 130)
+
+normal_x_ray_resize = transform.resize(imread(normal_x_ray), new_shape)
+
+print(pneumonia_x_ray_resize.shape)
+# (130, 130)
+
+# On peut maintenant visualiser mon image redimensionnée 
+plt.imshow(normal_x_ray_resize)
+```
+
+J'ai donc maintenant la solution pour mettre à l'échelle les images de mon dataset: 
+
+```
+# Je peux maitenant redimensionner mon dataset d'entrainement pour les poumons sains
+train_data_normal_resized = []
+
+# On défini la nouvelle shape de notre image
+new_shape = (130, 130)
+
+for x_ray_filename in os.listdir(train_path + '/NORMAL'):
+    # image sous la forme d'un numpy array
+    img = imread(train_path + '/NORMAL/' + x_ray_filename)
+    # on redimmensionne avec img_resized en fonction de la shape voulue
+    img_resized = transform.resize(img, new_shape)
+    train_data_normal_resized.append(img_resized)
+```
+
+Cependant je peux vite me rendre compte que cette solution est très consommatrice en terme de ressource pour ma machine (~ 2-3 minutes) seulement pour les images de la classe "NORMAL" du dataset d'entrainement. Je vais donc tenter une nouvelle approche. 
+ 
 #### Keras 
 
-Keras fournis une classe ImageDataGenerator pour mettre à l'échelle les images en pixel.
+Keras fournis une classe ImageDataGenerator pour traiter les images en amont avant de les fournir au réseau de neurone.
+
+```
+# Meilleure solution
+from keras_preprocessing.image import ImageDataGenerator
+
+# Pour obtenir le chemin du dossier courrant
+dirname = os.path.abspath('')
+
+# /!\On a besoin de créer une instance de la classe ImageDataGenerator avant de pouvoir utiliser flow_from_directory()
+core_idg = ImageDataGenerator()
+
+# string qui représente le chemin vers le dossier qui contient notre dataset (ex: train dataset)
+directory_path = os.path.join(dirname, 'chest_Xray/train') 
+
+# On défini la nouvelle shape de notre image
+new_shape = (130, 130)
+
+# On va convertir nos images en greyscale pour obtenir 1 seul canal de couleur
+color = 'grayscale'
+
+# classes: On va laisser à None et utiliser les classes correspondant aux sous dossiers (NORMAL/PNEUMONIA)
+
+# Ici on va selectionner binary car on est dans le cas où on a seulement deux catégories (NORMAL/PNEUMONIA)
+class_mode = 'binary'
+
+# Le dossier dans lequel on va sauvegarder nos images augmentées/normalisées
+new_images_dir = os.path.abspath('') + '/chest_Xray_resized/train'
+new_image_dir_prefix = 'resized'
+subset = 'training'
+
+print(new_images_dir)
+
+train_gen = core_idg.flow_from_directory(
+    directory=directory_path,
+    target_size=new_shape,
+    color_mode=color,
+    classes=None,
+    class_mode="binary",
+    batch_size=32,
+    shuffle=True,
+    seed=None,
+    save_to_dir=None,
+    save_prefix="",
+    save_format="png",
+    follow_links=False,
+    subset=None,
+    interpolation="nearest",
+)
+```
+
+Grâce à cette façon de faire, on peut générer l'image redimesionnéé et normaliée au moment de son utilisation. Cette méthode est moins consomatrice en ressource pour la machine. 
+
+```
+# On va maintenant visualiser
+# Les labels de mon dataset
+labels = os.listdir(train_path)
+
+t_x, t_y = next(train_gen)
+# La nouvelle shape des mes échantillons: (130, 130, 1)
+print(t_x[0].shape)
+plt.imshow(t_x[0])
+```
+
+On peut alors écrire une fonction qui va nous permettre de réutiliser la logique:
+
+```
+# Meilleure solution
+from keras_preprocessing.image import ImageDataGenerator
+
+# On peut créer une fonction pour réutiliser la logique pour chaque generator (test, train, ...)
+
+def get_dataset_gen(dataset_name, new_shape):
+    # /!\On a besoin de créer une instance de la classe ImageDataGenerator avant de pouvoir utiliser flow_from_directory()
+    core_idg = ImageDataGenerator()
+    
+    # Pour obtenir le chemin du dossier courrant
+    dirname = os.path.abspath('')
+
+    # string qui représente le chemin vers le dossier qui contient notre dataset (ex: train dataset)
+    directory_path = os.path.join(dirname, 'chest_Xray/' + dataset_name) 
+
+    # On va convertir nos images en greyscale pour obtenir 1 seul canal de couleur
+    color = 'grayscale'
+
+    # classes: On va laisser à None et utiliser les classes correspondant aux sous dossiers (NORMAL/PNEUMONIA)
+
+    # Ici on va selectionner binary car on est dans le cas où on a seulement deux catégories (NORMAL/PNEUMONIA)
+    class_mode = 'binary'
+
+    # Le dossier dans lequel on va sauvegarder nos images augmentées/normalisées
+    new_images_dir = os.path.abspath('') + '/chest_Xray_resized/train'
+    new_image_dir_prefix = 'resized'
+    subset = 'training'
+    
+    
+    
+    dataset_gen = core_idg.flow_from_directory(
+        directory=directory_path,
+        target_size=new_shape,
+        color_mode=class_mode,
+        classes=None,
+        class_mode="categorical",
+        batch_size=32,
+        shuffle=True,
+        seed=None,
+        save_to_dir=None,
+        save_prefix="",
+        save_format="png",
+        follow_links=False,
+        subset=None,
+        interpolation="nearest",
+    )
+    return dataset_gen
+
+train_gen = get_dataset_gen('train', (130, 130))
+test_gen = get_dataset_gen('test', (130, 130))
+```
+
+### Batch Size 
+
+C'est la quantité d'échantillon (provenant du dataset) avec lesquels l'ANN va être entrainé à la fois. Par défaut ```ImageDataGenerator.flow_from_directory()``` utilise un ```batch_size``` de 32. L'avantage d'un petit batch_size c'est les ressources de la machine allouer qui sont amoindrie. 
+
+	
+
+#### Binarisé les labels 
+
+
 
 
 
